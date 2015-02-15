@@ -5,3 +5,4 @@
 server/Servers/**
 *.classpath
 *.project
+*.idea
