@@ -2,6 +2,7 @@ package com.shopper;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,11 +36,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.shopper.domain.Store;
 import com.shopper.extra.Extra;
 import com.shopper.util.HttpUtils;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String SCOPE =
             "oauth2:https://www.googleapis.com/auth/userinfo.profile";
@@ -46,7 +53,8 @@ public class MainActivity extends ActionBarActivity {
     private String userEmail;
     private String userName;
     private String accessToken;
-
+    private GoogleApiClient mGoogleApiClient;
+    private Location lastLocation;
     private FrameLayout loader;
 
     private String tokenLogin = "";
@@ -57,6 +65,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         loader = (FrameLayout) findViewById(R.id.loader);
         pickUserAccount();
+        buildGoogleApiClient();
     }
 
     @Override
@@ -107,11 +116,49 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+
     private void pickUserAccount() {
         String[] accountTypes = new String[]{"com.google"};
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                 accountTypes, false, null, null, null, null);
         startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        Log.d("build google api client", "start");
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        Log.d("build google api client", "stop");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d("get location", "connected to service. start get location");
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (lastLocation != null) {
+            Log.i("get location", "Latitude is " + lastLocation.getLatitude());
+            Log.i("get location", "Longitude is " + lastLocation.getLongitude());
+//            final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            String token = intent.getStringExtra(Extra.EXTRA_TOKEN);
+            String token = Session.TOKEN;
+            new CheckinTask().execute(token);
+        } else {
+            Log.e("get location", "last location is null");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i("get location", "connection suspended: " + i);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("get location", connectionResult.toString());
     }
 
     private class OAuthTask extends AsyncTask<Void, Void, String> {
@@ -220,13 +267,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
-//            final Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-//            intent.putExtra(EXTRA_MESSAGE, result);
-//            startActivity(intent);
-//            TextView textView = (TextView) findViewById(R.id.user_name_field);
-//            textView.setText(result);
-//            loader.setVisibility(View.GONE);
-            new CheckinTask().execute(result);
+//            final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            intent.putExtra(Extra.EXTRA_TOKEN, result);
+            Session.TOKEN = result;
+
+            mGoogleApiClient.connect();
         }
     }
 
@@ -234,6 +279,49 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected Store doInBackground(String... params) {
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost("http://hackathon.lyashenko.by/store");
+
+            try {
+//                HttpParams httpParams = new BasicHttpParams();
+//                httpParams.setParameter("token", params[0]);
+//                httpParams.setParameter("lt", lastLocation.getLatitude());
+//                httpParams.setParameter("lg", lastLocation.getLongitude());
+//                httppost.setParams(httpParams);
+//                HttpEntity json = new StringEntity(params[0]);
+//                httppost.setEntity(json);
+//                HttpResponse response = httpclient.execute(httppost);
+//
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+//
+//                StringBuilder builder = new StringBuilder();
+//                for (String line = null; (line = reader.readLine()) != null;) {
+//                    builder.append(line).append("\n");
+//                }
+                StringBuilder builder = HttpUtils.connectionResult("http://hackathon.lyashenko.by/store?token=" + params[0] +
+                "&lt=" + lastLocation.getLatitude() + "&lg=" + lastLocation.getLongitude());
+                String json = builder.toString();
+                JSONArray jsonResult = new JSONArray(json);
+
+                if (jsonResult.length() > 0) {
+                    final Long id = jsonResult.getJSONObject(0).getLong("id");
+                    final String name = jsonResult.getJSONObject(0).getString("name");
+                    final String description = jsonResult.getJSONObject(0).getString("description");
+
+                    Store store = new Store() {{
+                        setDescription(description);
+                        setId(id);
+                        setName(name);
+                    }};
+
+                    Log.d("CheckinTask", "id: " + id + " name: " + name);
+                    return store;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return new Store();
         }
 
