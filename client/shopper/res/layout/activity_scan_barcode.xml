@@ -9,7 +9,7 @@
     tools:context="com.shopper.ScanBarcodeActivity" >
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -19,13 +19,11 @@
     </EditText>
 
     <Button
-        android:id="@+id/button1"
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/btnScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/editText1"
+        android:layout_alignBaseline="@+id/barcode"
         android:layout_alignParentRight="true"
-        android:text="Scan" 
-        android:onClick="btnGetBarcodeClick"/>
+        android:text="Scan" />
 
 </RelativeLayout>

@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,11 +17,17 @@ import com.google.zxing.integration.android.IntentResult;
 public class ScanBarcodeActivity extends ActionBarActivity implements OnClickListener{
 	
 	private EditText barcode;
+	private Button scan;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_scan_barcode);
+		
+		scan = (Button) findViewById(R.id.btnScan);
+		barcode = (EditText) findViewById(R.id.barcode);
+		
+		scan.setOnClickListener(this);
 	}
 
 	@Override
@@ -44,7 +51,7 @@ public class ScanBarcodeActivity extends ActionBarActivity implements OnClickLis
 	
 	@Override
 	public void onClick(View v) {
-		if(v.getId()==R.id.button1){
+		if(v.getId()==R.id.btnScan){
 			IntentIntegrator scanIntegrator = new IntentIntegrator(this);
 			scanIntegrator.initiateScan();	//scan
 		}	
@@ -65,6 +72,6 @@ public class ScanBarcodeActivity extends ActionBarActivity implements OnClickLis
 		String scanFormat = scanningResult.getFormatName();
 		
 //		formatTxt.setText("FORMAT: " + scanFormat);
-		contentTxt.setText("CONTENT: " + scanContent);
+		barcode.setText(scanContent);
 	}
 }

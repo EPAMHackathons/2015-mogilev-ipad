@@ -1,6 +1,7 @@
 package com.shopper;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,5 +33,10 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    public void next() {
+    	final Intent intent = new Intent(getApplicationContext(), ScanBarcodeActivity.class);
+		startActivity(intent);
     }
 }

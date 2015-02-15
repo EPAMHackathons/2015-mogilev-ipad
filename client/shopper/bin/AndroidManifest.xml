@@ -24,7 +24,11 @@
         </activity>
         <activity
             android:name=".ScanBarcodeActivity"
-            android:label="@string/title_activity_scan_barcode" >
+            android:label="@string/title_activity_scan_barcode"
+            android:parentActivityName=".MainActivity" >
+            <meta-data 
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
     </application>
 
