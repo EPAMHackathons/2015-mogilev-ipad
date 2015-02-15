@@ -14,7 +14,7 @@ class LoginFilters {
         all(controller:'*', action:'*') {
             before = {
                 if (loginRequired(controllerName, actionName)) {
-                    def uuid = params.token
+                    def uuid = params.token ?: request.JSON?.token
                     if (!uuid || !loginService.findToken(uuid)) {
                         def result = [
                             description: 'login required'
