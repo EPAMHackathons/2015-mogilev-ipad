@@ -14,7 +14,7 @@ class StoreController {
         def stores = Store.list().findAll { store ->
             store.places.any { place ->
                 place.latitude - RADIUS < latitude && latitude < place.latitude + RADIUS &&
-                place.longitude - RADIUS < longitude && latitude < place.longitude + RADIUS
+                place.longitude - RADIUS < longitude && longitude < place.longitude + RADIUS
             }
         }
 
