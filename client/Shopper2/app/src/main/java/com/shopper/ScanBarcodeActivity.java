@@ -131,6 +131,7 @@ public class ScanBarcodeActivity extends ActionBarActivity implements OnClickLis
         protected void onPostExecute(String result) {
             if ("{}".equals(result)) {
                 final Intent intent = new Intent(getApplicationContext(), NewArticleActivity.class);
+                intent.putExtra(Extra.EXTRA_TOKEN, tokenLogin);
                 intent.putExtra(Extra.EXTRA_ARTICLES, result);
                 intent.putExtra(Extra.EXTRA_NEW_BARCODE, barcode.getText().toString());
                 intent.putExtra("layout", R.layout.activity_new_article);
