@@ -33,6 +33,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.shopper.domain.Store;
+import com.shopper.extra.Extra;
 import com.shopper.util.HttpUtils;
 
 public class MainActivity extends ActionBarActivity {
@@ -219,9 +221,26 @@ public class MainActivity extends ActionBarActivity {
 //            final Intent intent = new Intent(getApplicationContext(), MapActivity.class);
 //            intent.putExtra(EXTRA_MESSAGE, result);
 //            startActivity(intent);
-            TextView textView = (TextView) findViewById(R.id.user_name_field);
-            textView.setText(result);
-            loader.setVisibility(View.GONE);
+//            TextView textView = (TextView) findViewById(R.id.user_name_field);
+//            textView.setText(result);
+//            loader.setVisibility(View.GONE);
+            new CheckinTask().execute(result);
+        }
+    }
+
+    private class CheckinTask extends AsyncTask<String, String, Store> {
+
+        @Override
+        protected Store doInBackground(String... params) {
+            return new Store();
+        }
+
+        protected void onPostExecute(Store result) {
+            final Intent intent = new Intent(getApplicationContext(), ScanBarcodeActivity.class);
+            intent.putExtra(Extra.EXTRA_STORE, result);
+
+            intent.putExtra("layout", R.layout.activity_scan_barcode);
+            startActivityForResult(intent, 0);
         }
     }
 } 
