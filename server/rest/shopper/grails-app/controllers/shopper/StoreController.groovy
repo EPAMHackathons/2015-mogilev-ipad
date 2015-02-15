@@ -23,6 +23,7 @@ class StoreController {
         render stores as JSON
     }
 
+
     def create() {
         def json = request.JSON
         def user = User.get(loginService.findToken(json.token).userId)
