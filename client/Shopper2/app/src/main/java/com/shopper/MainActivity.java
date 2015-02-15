@@ -49,6 +49,8 @@ public class MainActivity extends ActionBarActivity {
 
     private FrameLayout loader;
 
+    private String tokenLogin = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,8 +195,6 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            String token = "";
-
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("http://hackathon.lyashenko.by/user");
 
@@ -209,14 +209,14 @@ public class MainActivity extends ActionBarActivity {
                     builder.append(line).append("\n");
                 }
                 JSONObject jsonResult = new JSONObject(builder.toString());
-                token = jsonResult.getString("uuid");
+                tokenLogin = jsonResult.getString("uuid");
 
             } catch (Exception e) {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "Error!!!", Toast.LENGTH_SHORT);
                 toast.show();
             }
-            return token;
+            return tokenLogin;
         }
 
         protected void onPostExecute(String result) {
@@ -240,6 +240,7 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(Store result) {
             final Intent intent = new Intent(getApplicationContext(), ScanBarcodeActivity.class);
             intent.putExtra(Extra.EXTRA_STORE, result);
+            intent.putExtra(Extra.EXTRA_TOKEN, tokenLogin);
 
             intent.putExtra("layout", R.layout.activity_scan_barcode);
             startActivityForResult(intent, 0);
