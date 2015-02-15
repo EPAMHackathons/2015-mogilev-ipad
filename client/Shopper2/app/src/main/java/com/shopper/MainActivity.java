@@ -18,10 +18,20 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import com.shopper.util.HttpUtils;
 
@@ -150,26 +160,67 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
-                JSONObject profile = HttpUtils.getJSON("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken);
+                StringBuilder profile = HttpUtils.connectionResult("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken);
+//                JSONObject profile = HttpUtils.getJSON("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + accessToken);
                 if (profile == null) {
                     return null;
                 }
-                return profile.getString("name");
+                return profile.toString();
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-
             return userName;
         }
 
         @Override
-        protected void onPostExecute(String name) {
-            userName = name;
-            Log.d("onPostExecute", "user name is " + userName);
+        protected void onPostExecute(String profile) {
+
+            new UserLoginTask().execute(profile);
+
+
+            userName = profile;
+            Log.d("onPostExecute", "user profile is " + userName);
             TextView textView = (TextView) findViewById(R.id.user_name_field);
             textView.setText(userName);
+            loader.setVisibility(View.GONE);
+        }
+    }
+
+    private class UserLoginTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String token = "";
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("http://hackathon.lyashenko.by/user");
+
+            try {
+                HttpEntity json = new StringEntity(params[0]);
+                httppost.setEntity(json);
+                HttpResponse response = httpclient.execute(httppost);
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                StringBuilder builder = new StringBuilder();
+                for (String line = null; (line = reader.readLine()) != null;) {
+                    builder.append(line).append("\n");
+                }
+                JSONObject jsonResult = new JSONObject(builder.toString());
+                token = jsonResult.getString("uuid");
+
+            } catch (Exception e) {
+
+            }
+            return token;
+        }
+
+        protected void onPostExecute(String result) {
+//            final Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+//            intent.putExtra(EXTRA_MESSAGE, result);
+//            startActivity(intent);
+            TextView textView = (TextView) findViewById(R.id.user_name_field);
+            textView.setText(result);
             loader.setVisibility(View.GONE);
         }
     }
