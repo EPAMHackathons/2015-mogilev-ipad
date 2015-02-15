@@ -23,6 +23,9 @@ class StoreController {
         render stores as JSON
     }
 
+    def list() {
+        render Store.list() as JSON
+    }
 
     def create() {
         def json = request.JSON
