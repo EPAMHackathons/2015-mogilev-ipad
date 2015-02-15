@@ -8,7 +8,22 @@ class ArticleInStoreController {
 
     def index() {
         def article = Article.findByBarcode(params.barcode)
-        render article.articleInStoreList as JSON
+        def map = [:]
+        print 'here'
+        article.articleInStoreList.each { it ->
+            def list = map.get(it.storeId)
+            if (!list) {
+                list = []
+            }
+            list << it
+            map.put(it.storeId, list)
+        }
+        def articles = []
+        map.each {k,v->
+           articles << v.max {it.dateCreated}
+        }
+
+        render articles as JSON
     }
 
     def create() {
