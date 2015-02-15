@@ -24,14 +24,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <activity
-                android:name=".ScanBarcodeActivity"
-                android:label="@string/title_activity_scan_barcode"
-                android:parentActivityName=".MainActivity" >
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
-            </activity>
+        </activity>
+        <activity
+            android:name=".ScanBarcodeActivity"
+            android:label="@string/title_activity_scan_barcode"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
+        <activity
+            android:name=".NewArticleActivity"
+            android:label="@string/title_activity_new_article" >
         </activity>
     </application>
 

@@ -57,6 +57,8 @@ public class MainActivity extends ActionBarActivity implements
     private Location lastLocation;
     private FrameLayout loader;
 
+    private String tokenLogin = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -240,8 +242,6 @@ public class MainActivity extends ActionBarActivity implements
         @Override
         protected String doInBackground(String... params) {
 
-            String token = "";
-
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("http://hackathon.lyashenko.by/user");
 
@@ -256,12 +256,14 @@ public class MainActivity extends ActionBarActivity implements
                     builder.append(line).append("\n");
                 }
                 JSONObject jsonResult = new JSONObject(builder.toString());
-                token = jsonResult.getString("uuid");
+                tokenLogin = jsonResult.getString("uuid");
 
             } catch (Exception e) {
-
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Error!!!", Toast.LENGTH_SHORT);
+                toast.show();
             }
-            return token;
+            return tokenLogin;
         }
 
         protected void onPostExecute(String result) {
@@ -326,9 +328,15 @@ public class MainActivity extends ActionBarActivity implements
         protected void onPostExecute(Store result) {
             final Intent intent = new Intent(getApplicationContext(), ScanBarcodeActivity.class);
             intent.putExtra(Extra.EXTRA_STORE, result);
+            intent.putExtra(Extra.EXTRA_TOKEN, tokenLogin);
 
             intent.putExtra("layout", R.layout.activity_scan_barcode);
             startActivityForResult(intent, 0);
+//            final Intent intent = new Intent(getApplicationContext(), NewArticleActivity.class);
+//            intent.putExtra(Extra.EXTRA_STORE, result);
+//
+//            intent.putExtra("layout", R.layout.activity_new_article);
+//            startActivityForResult(intent, 0);
         }
     }
 } 
