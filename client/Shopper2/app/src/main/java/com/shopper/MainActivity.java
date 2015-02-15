@@ -2,6 +2,7 @@ package com.shopper;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,9 +24,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.shopper.util.HttpUtils;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String SCOPE =
             "oauth2:https://www.googleapis.com/auth/userinfo.profile";
@@ -34,7 +39,8 @@ public class MainActivity extends ActionBarActivity {
     private String userEmail;
     private String userName;
     private String accessToken;
-
+    private GoogleApiClient mGoogleApiClient;
+    private Location lastLocation;
     private FrameLayout loader;
 
     @Override
@@ -43,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         loader = (FrameLayout) findViewById(R.id.loader);
         pickUserAccount();
+        buildGoogleApiClient();
     }
 
     @Override
@@ -98,6 +105,38 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                 accountTypes, false, null, null, null, null);
         startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        Log.d("build google api client", "start");
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        Log.d("build google api client", "stop");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d("get location", "connected to service. start get location");
+        lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (lastLocation != null) {
+            Log.i("get location", "Latitude is " + lastLocation.getLatitude());
+            Log.i("get location", "Longitude is " + lastLocation.getLongitude());
+        } else {
+            Log.e("get location", "last location is null");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i("get location", "connection suspended: " + i);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("get location", connectionResult.toString());
     }
 
     private class OAuthTask extends AsyncTask<Void, Void, String> {
