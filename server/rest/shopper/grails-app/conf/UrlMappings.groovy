@@ -21,5 +21,7 @@ class UrlMappings {
         "/place"(controller: 'place', action: 'create', method: 'POST')
         "/article"(controller: 'article', action: 'index', method: 'GET')
         "/article"(controller: 'article', action: 'create', method: 'POST')
+        "/articleInStore"(controller: 'articleInStore', action: 'index', method: 'GET')
+        "/articleInStore"(controller: 'articleInStore', action: 'create', method: 'POST')
 	}
 }
