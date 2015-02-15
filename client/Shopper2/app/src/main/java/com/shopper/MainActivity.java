@@ -25,6 +25,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,6 +114,7 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
+
     private void pickUserAccount() {
         String[] accountTypes = new String[]{"com.google"};
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
@@ -126,6 +129,7 @@ public class MainActivity extends ActionBarActivity implements
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
         Log.d("build google api client", "stop");
     }
 
@@ -136,6 +140,10 @@ public class MainActivity extends ActionBarActivity implements
         if (lastLocation != null) {
             Log.i("get location", "Latitude is " + lastLocation.getLatitude());
             Log.i("get location", "Longitude is " + lastLocation.getLongitude());
+//            final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            String token = intent.getStringExtra(Extra.EXTRA_TOKEN);
+            String token = Session.TOKEN;
+            new CheckinTask().execute(token);
         } else {
             Log.e("get location", "last location is null");
         }
@@ -257,13 +265,11 @@ public class MainActivity extends ActionBarActivity implements
         }
 
         protected void onPostExecute(String result) {
-//            final Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-//            intent.putExtra(EXTRA_MESSAGE, result);
-//            startActivity(intent);
-//            TextView textView = (TextView) findViewById(R.id.user_name_field);
-//            textView.setText(result);
-//            loader.setVisibility(View.GONE);
-            new CheckinTask().execute(result);
+//            final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            intent.putExtra(Extra.EXTRA_TOKEN, result);
+            Session.TOKEN = result;
+
+            mGoogleApiClient.connect();
         }
     }
 
@@ -271,6 +277,49 @@ public class MainActivity extends ActionBarActivity implements
 
         @Override
         protected Store doInBackground(String... params) {
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost("http://hackathon.lyashenko.by/store");
+
+            try {
+//                HttpParams httpParams = new BasicHttpParams();
+//                httpParams.setParameter("token", params[0]);
+//                httpParams.setParameter("lt", lastLocation.getLatitude());
+//                httpParams.setParameter("lg", lastLocation.getLongitude());
+//                httppost.setParams(httpParams);
+//                HttpEntity json = new StringEntity(params[0]);
+//                httppost.setEntity(json);
+//                HttpResponse response = httpclient.execute(httppost);
+//
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+//
+//                StringBuilder builder = new StringBuilder();
+//                for (String line = null; (line = reader.readLine()) != null;) {
+//                    builder.append(line).append("\n");
+//                }
+                StringBuilder builder = HttpUtils.connectionResult("http://hackathon.lyashenko.by/store?token=" + params[0] +
+                "&lt=" + lastLocation.getLatitude() + "&lg=" + lastLocation.getLongitude());
+                String json = builder.toString();
+                JSONArray jsonResult = new JSONArray(json);
+
+                if (jsonResult.length() > 0) {
+                    final Long id = jsonResult.getJSONObject(0).getLong("id");
+                    final String name = jsonResult.getJSONObject(0).getString("name");
+                    final String description = jsonResult.getJSONObject(0).getString("description");
+
+                    Store store = new Store() {{
+                        setDescription(description);
+                        setId(id);
+                        setName(name);
+                    }};
+
+                    Log.d("CheckinTask", "id: " + id + " name: " + name);
+                    return store;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return new Store();
         }
 

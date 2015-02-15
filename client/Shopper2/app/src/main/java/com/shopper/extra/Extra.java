@@ -8,4 +8,5 @@ import com.shopper.domain.Store;
 public class Extra {
 
     public final static String EXTRA_STORE = "com.shopper.extra.Store";
+    public final static String EXTRA_TOKEN = "com.shopper.extra.token";
 }
