@@ -4,6 +4,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.shopper.extra.Extra;
 
 
 public class NewArticleActivity extends ActionBarActivity {
@@ -12,6 +15,8 @@ public class NewArticleActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_article);
+
+        ((TextView)findViewById(R.id.newbarcode)).setText(getIntent().getStringExtra(Extra.EXTRA_NEW_BARCODE));
     }
 
 
