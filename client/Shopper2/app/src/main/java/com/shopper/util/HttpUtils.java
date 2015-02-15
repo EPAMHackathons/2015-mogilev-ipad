@@ -19,7 +19,7 @@ public class HttpUtils {
         return new JSONObject(connectionResultStr);
     }
 
-    static StringBuilder connectionResult(String urlStr) throws IOException {
+    public static StringBuilder connectionResult(String urlStr) throws IOException {
         URL url = new URL(urlStr);
         URLConnection connection = url.openConnection();
 
