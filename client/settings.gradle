@@ -1,0 +1,2 @@
+include ':shopper'
+include ':appcompat_v7'
