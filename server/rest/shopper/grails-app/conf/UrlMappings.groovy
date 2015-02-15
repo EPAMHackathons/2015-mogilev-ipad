@@ -17,5 +17,9 @@ class UrlMappings {
         "/user/$id"(controller: 'user', action: 'show', method: 'GET')
         "/store"(controller: 'store', action: 'index', method: 'GET')
         "/store"(controller: 'store', action: 'create', method: 'POST')
+        "/place"(controller: 'place', action: 'index', method: 'GET')
+        "/place"(controller: 'place', action: 'create', method: 'POST')
+        "/article"(controller: 'article', action: 'index', method: 'GET')
+        "/article"(controller: 'article', action: 'create', method: 'POST')
 	}
 }

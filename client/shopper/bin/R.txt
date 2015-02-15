@@ -353,7 +353,6 @@ int id always 0x7f090014
 int id barcode 0x7f090041
 int id beginning 0x7f09001b
 int id btnScan 0x7f090042
-int id button1 0x7f090040
 int id checkbox 0x7f090029
 int id collapseActionView 0x7f090015
 int id decor_content_parent 0x7f09002f
@@ -396,10 +395,11 @@ int id showTitle 0x7f090012
 int id split_action_bar 0x7f090004
 int id submit_area 0x7f09003c
 int id tabMode 0x7f09000c
-int id textView1 0x7f09003f
 int id title 0x7f090027
 int id up 0x7f090001
 int id useLogo 0x7f090013
+int id user_email_field 0x7f09003f
+int id user_name_field 0x7f090040
 int id withText 0x7f090018
 int id wrap_content 0x7f090009
 int integer abc_max_action_buttons 0x7f080000
@@ -447,6 +447,7 @@ int string abc_searchview_description_voice 0x7f0a000b
 int string abc_shareactionprovider_share_with 0x7f0a000f
 int string abc_shareactionprovider_share_with_application 0x7f0a000e
 int string abc_toolbar_collapse_description 0x7f0a0004
+int string account_not_selected 0x7f0a0014
 int string action_settings 0x7f0a0012
 int string app_name 0x7f0a0010
 int string hello_world 0x7f0a0011
