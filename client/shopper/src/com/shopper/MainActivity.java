@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -35,8 +36,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     
-    public void next() {
+    public void next(View view) {
     	final Intent intent = new Intent(getApplicationContext(), ScanBarcodeActivity.class);
-		startActivity(intent);
+    	intent.putExtra("layout", R.layout.activity_scan_barcode);
+		startActivityForResult(intent, 0);
     }
 }
