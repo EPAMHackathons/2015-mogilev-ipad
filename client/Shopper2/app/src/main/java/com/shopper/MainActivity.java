@@ -212,7 +212,9 @@ public class MainActivity extends ActionBarActivity {
                 token = jsonResult.getString("uuid");
 
             } catch (Exception e) {
-
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Error!!!", Toast.LENGTH_SHORT);
+                toast.show();
             }
             return token;
         }
@@ -241,6 +243,11 @@ public class MainActivity extends ActionBarActivity {
 
             intent.putExtra("layout", R.layout.activity_scan_barcode);
             startActivityForResult(intent, 0);
+//            final Intent intent = new Intent(getApplicationContext(), NewArticleActivity.class);
+//            intent.putExtra(Extra.EXTRA_STORE, result);
+//
+//            intent.putExtra("layout", R.layout.activity_new_article);
+//            startActivityForResult(intent, 0);
         }
     }
 } 
