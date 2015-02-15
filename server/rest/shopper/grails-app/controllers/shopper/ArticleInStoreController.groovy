@@ -9,7 +9,7 @@ class ArticleInStoreController {
     def index() {
         def article = Article.findByBarcode(params.barcode)
         def map = [:]
-        print 'here'
+
         article.articleInStoreList.each { it ->
             def list = map.get(it.storeId)
             if (!list) {
