@@ -1,4 +1,4 @@
-package com.shopper.shopper2;
+package com.shopper;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
