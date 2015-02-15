@@ -17,7 +17,7 @@ class LoginFilters {
                     def uuid = params.token
                     if (!uuid || !loginService.findToken(uuid)) {
                         def result = [
-                            desctiption: 'login required'
+                            description: 'login required'
                         ]
                         response.setStatus(response.SC_FORBIDDEN)
                         render result as JSON
@@ -35,9 +35,9 @@ class LoginFilters {
             actionName = 'index'
         }
         def result = true
-        def exludedActions = EXCLUDED_ACTIONS[controllerName]
-        if (exludedActions) {
-            if (exludedActions[0] == '*' || actionName in exludedActions) {
+        def excludedActions = EXCLUDED_ACTIONS[controllerName]
+        if (excludedActions) {
+            if (excludedActions[0] == '*' || actionName in excludedActions) {
                 result = false
             }
         }

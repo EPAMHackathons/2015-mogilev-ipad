@@ -8,7 +8,7 @@ class Store {
     List<Place> places = []
 
     static hasMany = [
-        places: Place
+            places: Place
     ]
 
     static constraints = {

@@ -7,7 +7,7 @@ class Place {
     double latitude
 
     static belongsTo = [
-        store: Store
+            store: Store
     ]
 
     static constraints = {
